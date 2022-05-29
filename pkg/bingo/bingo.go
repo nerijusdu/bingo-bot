@@ -109,13 +109,13 @@ func (b *Bingo) IsCompleted() bool {
 		numbersInARow := 0
 
 		for j := 1; j <= b.lineLength; j++ {
-			cell, ok := b.cells[i*j]
+			cell, ok := b.cells[(i-1)*b.lineLength+j]
 			if !ok || !cell.isMarked {
-				break
+				continue
 			}
 
 			numbersInARow++
-			columns[j-1]++
+			columns[j-1] = columns[j-1] + 1
 
 			if i == j {
 				diagonalIncline++
