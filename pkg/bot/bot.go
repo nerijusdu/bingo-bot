@@ -100,12 +100,6 @@ func (b *Bot) Run() {
 		},
 	})
 
-	bot.Command("test", &slacker.CommandDefinition{
-		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-			response.Reply(botCtx.Event().Channel)
-		},
-	})
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

@@ -106,7 +106,7 @@ var isCompleteTests = []cellCompleteTest{
 	},
 }
 
-func TestIsCompletedCompletes(t *testing.T) {
+func TestIsCompleted(t *testing.T) {
 	for _, test := range isCompleteTests {
 		bingo := InitBingo(1, "channelId", test.cells, nil)
 		assert.Equal(t, test.expected, bingo.IsCompleted(), test.name)
