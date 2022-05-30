@@ -38,7 +38,7 @@ func (r *BingoRepository) GetBingoCells(bingoId int) map[int]*BingoCell {
 		cells[index] = &BingoCell{
 			id:       id,
 			Text:     text,
-			isMarked: isMarked,
+			IsMarked: isMarked,
 		}
 	}
 
