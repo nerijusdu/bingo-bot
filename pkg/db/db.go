@@ -32,18 +32,37 @@ func (d *Database) Close() {
 	d.db.Close()
 }
 
-func (d *Database) Exec(query string, args ...interface{}) sql.Result {
-	res, err := d.db.Exec(query, args...)
-	checkErr(err)
+func (d *Database) Exec(query string, args ...interface{}) error {
+	_, err := d.db.Exec(query, args...)
+	if err != nil {
+		fmt.Printf("Error executing query: %s\n", err.Error())
+	}
 
-	return res
+	return err
 }
 
-func (d *Database) Query(query string, args ...interface{}) *sql.Rows {
-	rows, err := d.db.Query(query, args...)
-	checkErr(err)
+func (d *Database) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	res, err := d.db.Query(query, args...)
+	if err != nil {
+		fmt.Printf("Error executing query: %s\n", err.Error())
+	}
 
-	return rows
+	return res, err
+}
+
+func (d *Database) Insert(query string, args ...interface{}) (int, error) {
+	res, err := d.db.Exec(query, args...)
+	if err != nil {
+		fmt.Printf("Error executing query: %s\n", err.Error())
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		fmt.Printf("Error executing query: %s\n", err.Error())
+	}
+
+	return int(id), err
 }
 
 func initializeDatabase(db *sql.DB) {

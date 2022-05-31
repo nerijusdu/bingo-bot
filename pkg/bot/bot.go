@@ -31,6 +31,11 @@ func (b *Bot) Run() {
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			text := request.Param("item")
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
+
 			bingo.AddCell(text)
 			response.Reply(bingo.ToString())
 		},
@@ -42,6 +47,11 @@ func (b *Bot) Run() {
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			id := request.IntegerParam("id", 0)
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
+
 			if !bingo.RemoveCell(id) {
 				response.Reply(fmt.Sprintf("Cell %d not found", id))
 			}
@@ -56,6 +66,11 @@ func (b *Bot) Run() {
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			id := request.IntegerParam("id", 0)
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
+
 			if !bingo.MarkCell(id) {
 				response.Reply(fmt.Sprintf("Cell %d not found", id))
 			}
@@ -75,6 +90,10 @@ func (b *Bot) Run() {
 			id1 := request.IntegerParam("id1", 0)
 			id2 := request.IntegerParam("id2", 0)
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
 
 			if !bingo.SwitchCells(id1, id2) {
 				response.Reply("Invalid cell numbers")
@@ -89,6 +108,11 @@ func (b *Bot) Run() {
 		Example:     "bingo reset",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
+
 			bingo.Reset()
 			response.Reply(bingo.ToString())
 		},
@@ -99,6 +123,11 @@ func (b *Bot) Run() {
 		Example:     "bingo list",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
+
 			response.Reply(bingo.ToString())
 		},
 	})
@@ -109,6 +138,11 @@ func (b *Bot) Run() {
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			channel := botCtx.Event().Channel
 			bingo := bingoMgr.GetOrCreate(channel)
+			if bingo == nil {
+				response.Reply("Failed to get bingo board")
+				return
+			}
+
 			if len(bingo.Cells) == 0 {
 				response.Reply("No bingo items")
 				return

@@ -11,11 +11,12 @@ func NewBingoRepository(database *db.Database) *BingoRepository {
 }
 
 func (r *BingoRepository) GetBingo(channelId string) *Bingo {
-	row := r.db.Query("SELECT id, channelId FROM Bingo WHERE channelId = ? LIMIT 1", channelId)
-	defer row.Close()
-	if row == nil {
+	row, err := r.db.Query("SELECT id, channelId FROM Bingo WHERE channelId = ? LIMIT 1", channelId)
+	if err != nil || row == nil {
 		return nil
 	}
+
+	defer row.Close()
 
 	var id int
 	var chId string
@@ -25,7 +26,11 @@ func (r *BingoRepository) GetBingo(channelId string) *Bingo {
 }
 
 func (r *BingoRepository) GetBingoCells(bingoId int) map[int]*BingoCell {
-	row := r.db.Query("SELECT id, `index`, text, isMarked FROM BingoItems WHERE bingoId = ?", bingoId)
+	row, err := r.db.Query("SELECT id, `index`, text, isMarked FROM BingoItems WHERE bingoId = ?", bingoId)
+	if err != nil || row == nil {
+		return nil
+	}
+
 	defer row.Close()
 
 	cells := map[int]*BingoCell{}
@@ -45,27 +50,32 @@ func (r *BingoRepository) GetBingoCells(bingoId int) map[int]*BingoCell {
 	return cells
 }
 
-func (r *BingoRepository) CreateBingo(channelId string) *Bingo {
-	r.db.Exec("INSERT INTO Bingo (channelId) VALUES (?)", channelId)
+func (r *BingoRepository) CreateBingo(channelId string) (*Bingo, error) {
+	_, err := r.db.Insert("INSERT INTO Bingo (channelId) VALUES (?)", channelId)
+	if err != nil {
+		return nil, err
+	}
 
-	return r.GetBingo(channelId)
+	return r.GetBingo(channelId), nil
 }
 
-func (r *BingoRepository) AddCell(bingoId int, text string, index int) int {
-	res := r.db.Exec("INSERT INTO BingoItems (bingoId, text, `index`) VALUES (?, ?, ?)", bingoId, text, index)
-	id, _ := res.LastInsertId()
-	return int(id)
+func (r *BingoRepository) AddCell(bingoId int, text string, index int) (int, error) {
+	return r.db.Insert("INSERT INTO BingoItems (bingoId, text, `index`) VALUES (?, ?, ?)", bingoId, text, index)
 }
 
-func (r *BingoRepository) RemoveCell(bingoId, index, cellId int) {
-	r.db.Exec("DELETE FROM BingoItems WHERE id = ?", cellId)
-	r.db.Exec("UPDATE BingoItems SET `index` = `index` - 1 WHERE  `index` > ? AND bingoId = ?", index, bingoId)
+func (r *BingoRepository) RemoveCell(bingoId, index, cellId int) error {
+	err := r.db.Exec("DELETE FROM BingoItems WHERE id = ?", cellId)
+	if err != nil {
+		return err
+	}
+
+	return r.db.Exec("UPDATE BingoItems SET `index` = `index` - 1 WHERE  `index` > ? AND bingoId = ?", index, bingoId)
 }
 
-func (r *BingoRepository) UpdateCell(id int, index int, isMarked bool) {
-	r.db.Exec("UPDATE BingoItems SET `index` = ?, isMarked = ? WHERE id = ?", index, isMarked, id)
+func (r *BingoRepository) UpdateCell(id int, index int, isMarked bool) error {
+	return r.db.Exec("UPDATE BingoItems SET `index` = ?, isMarked = ? WHERE id = ?", index, isMarked, id)
 }
 
-func (r *BingoRepository) ResetBingo(id int) {
-	r.db.Exec("UPDATE BingoItems SET isMarked = 0 WHERE bingoId = ?", id)
+func (r *BingoRepository) ResetBingo(id int) error {
+	return r.db.Exec("UPDATE BingoItems SET isMarked = 0 WHERE bingoId = ?", id)
 }

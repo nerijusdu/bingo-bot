@@ -41,18 +41,22 @@ func InitBingo(id int, channelId string, cells map[int]*BingoCell, r *BingoRepos
 	return bingo
 }
 
-func (b *Bingo) AddCell(text string) int {
+func (b *Bingo) AddCell(text string) (int, error) {
 	i := len(b.Cells) + 1
+	id, err := b.repository.AddCell(b.id, text, i)
+	if err != nil {
+		return 0, err
+	}
+
 	b.Cells[i] = &BingoCell{
+		id:       id,
 		Text:     text,
 		IsMarked: false,
 	}
 
-	b.repository.AddCell(b.id, text, i)
-
 	b.updateGridSize()
 
-	return i
+	return i, nil
 }
 
 func (b *Bingo) RemoveCell(i int) bool {
@@ -61,11 +65,14 @@ func (b *Bingo) RemoveCell(i int) bool {
 		return false
 	}
 
+	err := b.repository.RemoveCell(b.id, i, cell.id)
+	if err != nil {
+		return false
+	}
+
 	for i := i; i < len(b.Cells); i++ {
 		b.Cells[i] = b.Cells[i+1]
 	}
-
-	b.repository.RemoveCell(b.id, i, cell.id)
 
 	b.updateGridSize()
 	return true
@@ -81,10 +88,12 @@ func (b *Bingo) SwitchCells(i1 int, i2 int) bool {
 	b.Cells[i1] = cell2
 	b.Cells[i2] = cell1
 
-	b.repository.UpdateCell(cell1.id, i2, cell2.IsMarked)
-	b.repository.UpdateCell(cell2.id, i1, cell1.IsMarked)
-
-	return true
+	err := b.repository.UpdateCell(cell1.id, i2, cell2.IsMarked)
+	if err != nil {
+		return false
+	}
+	err = b.repository.UpdateCell(cell2.id, i1, cell1.IsMarked)
+	return err == nil
 }
 
 func (b *Bingo) MarkCell(i int) bool {
@@ -95,9 +104,8 @@ func (b *Bingo) MarkCell(i int) bool {
 
 	cell.IsMarked = true
 
-	b.repository.UpdateCell(cell.id, i, true)
-
-	return true
+	err := b.repository.UpdateCell(cell.id, i, true)
+	return err == nil
 }
 
 func (b *Bingo) IsCompleted() bool {
@@ -137,12 +145,13 @@ func (b *Bingo) IsCompleted() bool {
 	return false
 }
 
-func (b *Bingo) Reset() {
+func (b *Bingo) Reset() bool {
 	for _, v := range b.Cells {
 		v.IsMarked = false
 	}
 
-	b.repository.ResetBingo(b.id)
+	err := b.repository.ResetBingo(b.id)
+	return err == nil
 }
 
 func (b *Bingo) ToString() string {
