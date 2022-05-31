@@ -65,7 +65,7 @@ func (b *Bingo) RemoveCell(i int) bool {
 		b.Cells[i] = b.Cells[i+1]
 	}
 
-	b.repository.RemoveCell(cell.id)
+	b.repository.RemoveCell(b.id, i, cell.id)
 
 	b.updateGridSize()
 	return true
@@ -146,6 +146,10 @@ func (b *Bingo) Reset() {
 }
 
 func (b *Bingo) ToString() string {
+	if len(b.Cells) == 0 {
+		return "No items added yet"
+	}
+
 	var items []string
 	for i := 1; i <= len(b.Cells); i++ {
 		markedText := ""

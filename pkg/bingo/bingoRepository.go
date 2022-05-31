@@ -57,8 +57,9 @@ func (r *BingoRepository) AddCell(bingoId int, text string, index int) int {
 	return int(id)
 }
 
-func (r *BingoRepository) RemoveCell(id int) {
-	r.db.Exec("DELETE FROM BingoItems WHERE id = ?", id)
+func (r *BingoRepository) RemoveCell(bingoId, index, cellId int) {
+	r.db.Exec("DELETE FROM BingoItems WHERE id = ?", cellId)
+	r.db.Exec("UPDATE BingoItems SET `index` = `index` - 1 WHERE  `index` > ? AND bingoId = ?", index, bingoId)
 }
 
 func (r *BingoRepository) UpdateCell(id int, index int, isMarked bool) {

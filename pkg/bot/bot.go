@@ -3,11 +3,14 @@ package bot
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"restracker/pkg/bingo"
 	"restracker/pkg/db"
+	"restracker/pkg/visual"
 
 	"github.com/shomali11/slacker"
+	"github.com/slack-go/slack"
 )
 
 type Bot struct {
@@ -97,6 +100,37 @@ func (b *Bot) Run() {
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
 			response.Reply(bingo.ToString())
+		},
+	})
+
+	bot.Command("bingo", &slacker.CommandDefinition{
+		Description: "Show the bingo board",
+		Example:     "bingo",
+		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+			channel := botCtx.Event().Channel
+			bingo := bingoMgr.GetOrCreate(channel)
+			if len(bingo.Cells) == 0 {
+				response.Reply("No bingo items")
+				return
+			}
+
+			r, w := io.Pipe()
+			go func() {
+				defer w.Close()
+				visual.GenerateImage(bingo, w)
+			}()
+
+			_, err := botCtx.Client().UploadFile(slack.FileUploadParameters{
+				Filetype: "png",
+				Filename: "bingo.png",
+				Title:    "Bingo",
+				Channels: []string{channel},
+				Reader:   r,
+			})
+
+			if err != nil {
+				response.Reply(err.Error())
+			}
 		},
 	})
 

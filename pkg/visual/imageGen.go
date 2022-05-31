@@ -1,12 +1,13 @@
 package visual
 
 import (
+	"io"
 	"restracker/pkg/bingo"
 
 	"github.com/fogleman/gg"
 )
 
-func GenerateImage(b *bingo.Bingo) {
+func GenerateImage(b *bingo.Bingo, w io.Writer) error {
 	width := 300
 	height := 300
 	cellHeight := float64(height / b.LineLength)
@@ -25,10 +26,7 @@ func GenerateImage(b *bingo.Bingo) {
 		}
 	}
 
-	err := dc.SavePNG("out.png")
-	if err != nil {
-		panic(err)
-	}
+	return dc.EncodePNG(w)
 }
 
 func drawCell(dc *gg.Context, cellHeight, cellWidth float64, i, j int, cell *bingo.BingoCell) {
