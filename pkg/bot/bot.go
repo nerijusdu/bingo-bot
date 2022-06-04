@@ -14,15 +14,21 @@ import (
 )
 
 type Bot struct {
-	db *db.Database
+	db     *db.Database
+	token  string
+	teamId string
 }
 
-func NewBot(database *db.Database) *Bot {
-	return &Bot{db: database}
+func NewBot(database *db.Database, accessToken string, teamId string) *Bot {
+	return &Bot{
+		db:     database,
+		token:  accessToken,
+		teamId: teamId,
+	}
 }
 
 func (b *Bot) Run() {
-	bot := slacker.NewClient(os.Getenv("SLACK_BOT_TOKEN"), os.Getenv("SLACK_APP_TOKEN"))
+	bot := slacker.NewClient(b.token, os.Getenv("SLACK_APP_TOKEN"))
 	bingoMgr := bingo.NewBingoManager(b.db)
 
 	bot.Command("bingo add <item>", &slacker.CommandDefinition{
@@ -122,6 +128,7 @@ func (b *Bot) Run() {
 		Description: "Show the bingo items in a list",
 		Example:     "bingo list",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+			fmt.Println("yeet")
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
 			if bingo == nil {
 				response.Reply("Failed to get bingo board")
@@ -171,8 +178,9 @@ func (b *Bot) Run() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	fmt.Println("Starting bingo bot instance fot team " + b.teamId)
 	err := bot.Listen(ctx)
 	if err != nil {
-		panic(err)
+		fmt.Println("failed to start bot", err)
 	}
 }

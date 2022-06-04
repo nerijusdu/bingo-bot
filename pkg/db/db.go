@@ -58,7 +58,7 @@ func (d *Database) Insert(query string, args ...interface{}) (int, error) {
 	}
 
 	id, err := res.LastInsertId()
-	if err != nil {
+	if err != nil || id == 0 {
 		fmt.Printf("Error executing query: %s\n", err.Error())
 	}
 

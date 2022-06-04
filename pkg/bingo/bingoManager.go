@@ -1,6 +1,8 @@
 package bingo
 
-import "restracker/pkg/db"
+import (
+	"restracker/pkg/db"
+)
 
 type BingoManager struct {
 	repository *BingoRepository

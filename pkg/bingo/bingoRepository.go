@@ -1,6 +1,9 @@
 package bingo
 
-import "restracker/pkg/db"
+import (
+	"fmt"
+	"restracker/pkg/db"
+)
 
 type BingoRepository struct {
 	db *db.Database
@@ -20,7 +23,12 @@ func (r *BingoRepository) GetBingo(channelId string) *Bingo {
 
 	var id int
 	var chId string
+	hasResult := row.Next()
 	row.Scan(&id, &chId)
+	if !hasResult || id == 0 {
+		fmt.Println("No bingo found for channel: " + channelId)
+		return nil
+	}
 
 	return InitBingo(id, chId, r.GetBingoCells(id), r)
 }
