@@ -8,6 +8,7 @@ import (
 	"restracker/pkg/bingo"
 	"restracker/pkg/db"
 	"restracker/pkg/visual"
+	"strings"
 
 	"github.com/shomali11/slacker"
 	"github.com/slack-go/slack"
@@ -35,14 +36,25 @@ func (b *Bot) Run() {
 		Description: "Add a new cell to the bingo board",
 		Example:     "bingo add <cell text>",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-			text := request.Param("item")
+			items := strings.Split(request.Param("item"), ";")
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
 			if bingo == nil {
 				response.Reply("Failed to get bingo board")
 				return
 			}
 
-			bingo.AddCell(text)
+			for _, item := range items {
+				text := strings.TrimSpace(item)
+				if text == "" {
+					continue
+				}
+
+				if _, err := bingo.AddCell(text); err != nil {
+					response.Reply(fmt.Sprintf("Failed to add item: %s", err))
+					return
+				}
+			}
+
 			response.Reply(bingo.ToString())
 		},
 	})

@@ -10,7 +10,7 @@ Slack bot that I made while learning Go.
 ## Commands
 - `bingo` - show bingo board
 - `bingo list` - lists bingo items
-- `bingo add <item>` - adds item to bingo board
+- `bingo add <item>` - adds item to bingo board. You can add multiple items at once by splitting them with `;`
 - `bingo remove <id>` - removes an item from bingo board
 - `bingo mark <id>` - marks an item as completed
 - `bingo switch <id1> <id2>` - sitches item <id1> with <id2>
@@ -33,7 +33,7 @@ Slack bot that I made while learning Go.
 
 ## TODO
 - [X] Get bot token from oauth, not from env variables
-- [ ] Add multiple items at once
+- [X] Add multiple items at once
 - [ ] Home page with "Add to slack" button
 - [ ] Bingo board name
   - [ ] Render name in the image
