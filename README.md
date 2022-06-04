@@ -20,3 +20,12 @@ Slack bot that I made while learning Go.
 - Follow the steps to setup slack app [from Slacker docs](https://github.com/shomali11/slacker#preparing-your-slack-app)
 - Create `.env` file with `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN`
 - `go run .`
+
+# Docker info
+- Mount a volume to `/usr/src/app/data` to save database file
+
+## TODO
+- [ ] Get bot token from oauth, not from env variables
+- [ ] Add multiple items at once
+- [ ] Bingo board name
+  - [ ] Render name in the image
