@@ -20,7 +20,6 @@ type authServer struct {
 }
 
 func StartAuthServer(db *db.Database) {
-	fmt.Println("Starting server")
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -36,6 +35,7 @@ func StartAuthServer(db *db.Database) {
 	http.HandleFunc("/", server.handleHomePage)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("www"))))
 
+	fmt.Println("Starting server on " + host + ":" + port)
 	http.ListenAndServe(host+":"+port, nil)
 }
 

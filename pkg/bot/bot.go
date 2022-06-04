@@ -140,7 +140,6 @@ func (b *Bot) Run() {
 		Description: "Show the bingo items in a list",
 		Example:     "bingo list",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-			fmt.Println("yeet")
 			bingo := bingoMgr.GetOrCreate(botCtx.Event().Channel)
 			if bingo == nil {
 				response.Reply("Failed to get bingo board")
