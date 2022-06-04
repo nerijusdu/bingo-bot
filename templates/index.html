@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo bot</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+  </style>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body>
+  <a id="add-to-slack-btn"
+    href="https://slack.com/oauth/v2/authorize?client_id=3349553291365.3612982800192&scope=app_mentions:read,channels:history,chat:write,groups:history,im:history,mpim:history,users:read,files:write&user_scope=">
+    <img alt="Add to Slack" height="30" width="100" src="https://platform.slack-edge.com/img/add_to_slack.png" />
+  </a>
+
+  {{.}}
+
+  <script>
+    const header = document.querySelector('h1');
+    const btn = document.querySelector('#add-to-slack-btn');
+    header.append(btn);
+  </script>
+</body>
+
+</html>

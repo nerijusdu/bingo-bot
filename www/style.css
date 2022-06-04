@@ -1,0 +1,36 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  padding: 0 10px;
+  background-color: #1f272d;
+  color: white;
+}
+
+a {
+  color: #2cbcbc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  background-color: #2d333b;
+  padding: 2px 4px;
+}
+
+li {
+  margin: 10px 0;
+}
+
+h1 {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+#add-to-slack-btn {
+  height: 30px;
+}

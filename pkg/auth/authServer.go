@@ -4,10 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"restracker/pkg/bot"
 	"restracker/pkg/db"
+
+	"github.com/gomarkdown/markdown"
 )
 
 type authServer struct {
@@ -29,6 +33,8 @@ func StartAuthServer(db *db.Database) {
 	}
 
 	http.HandleFunc("/auth", server.handleAuth)
+	http.HandleFunc("/", server.handleHomePage)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("www"))))
 
 	http.ListenAndServe(host+":"+port, nil)
 }
@@ -80,6 +86,27 @@ func getAccessToken(code string) (AccessData, error) {
 	}
 
 	return accessData, nil
+}
+
+func (s *authServer) handleHomePage(w http.ResponseWriter, r *http.Request) {
+	content, err := ioutil.ReadFile("README.md")
+	if err != nil {
+		fmt.Println("Error reading README.md:", err)
+		somethingWentWrong(w)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		fmt.Println("Error parsing index.html:", err)
+		somethingWentWrong(w)
+		return
+	}
+
+	content = markdown.NormalizeNewlines(content)
+	output := markdown.ToHTML(content, nil, nil)
+
+	tmpl.Execute(w, template.HTML(output))
 }
 
 func somethingWentWrong(w http.ResponseWriter) {

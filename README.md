@@ -28,12 +28,10 @@ Slack bot that I made while learning Go.
   - `PORT` - optional, port for auth server, default - 3050
 - `go run .`
 
-# Docker info
-- Mount a volume to `/usr/src/app/data` to save database file
+## Docker info
+- Mount a volume to `/usr/src/app/data` to save database file (this project is using SQLite)
 
 ## TODO
-- [X] Get bot token from oauth, not from env variables
-- [X] Add multiple items at once
-- [ ] Home page with "Add to slack" button
-- [ ] Bingo board name
-  - [ ] Render name in the image
+- Home page with "Add to slack" button
+- Bingo board name
+  - Render name in the image
