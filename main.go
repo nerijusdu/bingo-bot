@@ -1,8 +1,8 @@
 package main
 
 import (
-	"restracker/pkg/auth"
-	"restracker/pkg/db"
+	"bingobot/pkg/auth"
+	"bingobot/pkg/db"
 
 	_ "github.com/joho/godotenv/autoload"
 )

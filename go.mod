@@ -1,4 +1,4 @@
-module restracker
+module bingobot
 
 go 1.17
 

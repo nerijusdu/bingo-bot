@@ -1,7 +1,7 @@
 package bingo
 
 import (
-	"restracker/pkg/db"
+	"bingobot/pkg/db"
 )
 
 type BingoManager struct {

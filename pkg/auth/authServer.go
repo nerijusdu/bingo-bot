@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"bingobot/pkg/bot"
+	"bingobot/pkg/db"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -8,8 +10,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"restracker/pkg/bot"
-	"restracker/pkg/db"
 
 	"github.com/gomarkdown/markdown"
 )

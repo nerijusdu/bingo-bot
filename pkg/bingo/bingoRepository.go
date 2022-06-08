@@ -1,8 +1,8 @@
 package bingo
 
 import (
+	"bingobot/pkg/db"
 	"fmt"
-	"restracker/pkg/db"
 )
 
 type BingoRepository struct {

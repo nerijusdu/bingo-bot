@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"bingobot/pkg/bot"
+	"bingobot/pkg/db"
 	"os"
-	"restracker/pkg/bot"
-	"restracker/pkg/db"
 )
 
 func StartAllBots(db *db.Database) error {

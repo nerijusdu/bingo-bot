@@ -1,6 +1,6 @@
 package auth
 
-import "restracker/pkg/db"
+import "bingobot/pkg/db"
 
 type AuthRepository struct {
 	db *db.Database

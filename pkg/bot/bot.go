@@ -1,13 +1,13 @@
 package bot
 
 import (
+	"bingobot/pkg/bingo"
+	"bingobot/pkg/db"
+	"bingobot/pkg/visual"
 	"context"
 	"fmt"
 	"io"
 	"os"
-	"restracker/pkg/bingo"
-	"restracker/pkg/db"
-	"restracker/pkg/visual"
 	"strings"
 
 	"github.com/shomali11/slacker"

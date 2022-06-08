@@ -1,8 +1,8 @@
 package visual
 
 import (
+	"bingobot/pkg/bingo"
 	"io"
-	"restracker/pkg/bingo"
 
 	"github.com/fogleman/gg"
 )
