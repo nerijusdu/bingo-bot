@@ -72,6 +72,7 @@ func (b *Bot) Run() {
 
 			if !bingo.RemoveCell(id) {
 				response.Reply(fmt.Sprintf("Cell %d not found", id))
+				return
 			}
 
 			response.Reply(bingo.ToString())
@@ -91,12 +92,16 @@ func (b *Bot) Run() {
 
 			if !bingo.MarkCell(id) {
 				response.Reply(fmt.Sprintf("Cell %d not found", id))
+				return
 			}
 
 			if bingo.IsCompleted() {
-				response.Reply(":bell: :bell: :bell: Bingo! You win! :tada:")
-			} else {
-				response.Reply(bingo.ToString())
+				response.Reply(":bell: :bell: :bell: Bingo! You win! :tada: :tada: :tada:")
+			}
+
+			err := sendBingoBoard(bingo, botCtx)
+			if err != nil {
+				response.Reply(err.Error())
 			}
 		},
 	})
@@ -132,7 +137,10 @@ func (b *Bot) Run() {
 			}
 
 			bingo.Reset()
-			response.Reply(bingo.ToString())
+			err := sendBingoBoard(bingo, botCtx)
+			if err != nil {
+				response.Reply(err.Error())
+			}
 		},
 	})
 
@@ -166,20 +174,7 @@ func (b *Bot) Run() {
 				return
 			}
 
-			r, w := io.Pipe()
-			go func() {
-				defer w.Close()
-				visual.GenerateImage(bingo, w)
-			}()
-
-			_, err := botCtx.Client().UploadFile(slack.FileUploadParameters{
-				Filetype: "png",
-				Filename: "bingo.png",
-				Title:    "Bingo",
-				Channels: []string{channel},
-				Reader:   r,
-			})
-
+			err := sendBingoBoard(bingo, botCtx)
 			if err != nil {
 				response.Reply(err.Error())
 			}
@@ -194,4 +189,22 @@ func (b *Bot) Run() {
 	if err != nil {
 		fmt.Println("failed to start bot", err)
 	}
+}
+
+func sendBingoBoard(bingo *bingo.Bingo, botCtx slacker.BotContext) error {
+	r, w := io.Pipe()
+	go func() {
+		defer w.Close()
+		visual.GenerateImage(bingo, w)
+	}()
+
+	_, err := botCtx.Client().UploadFile(slack.FileUploadParameters{
+		Filetype: "png",
+		Filename: "bingo.png",
+		Title:    "Bingo",
+		Channels: []string{botCtx.Event().Channel},
+		Reader:   r,
+	})
+
+	return err
 }

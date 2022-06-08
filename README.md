@@ -31,6 +31,9 @@ Slack bot that I made while learning Go.
 ## Docker info
 - Mount a volume to `/usr/src/app/data` to save database file (this project is using SQLite)
 
+## Limitations
+Currently, only single workspace can be added per app. Need to rewrite everything without slack-go package or to not use sockets.
+
 ## TODO
 - Home page with "Add to slack" button
 - Bingo board name
